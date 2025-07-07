@@ -22,9 +22,6 @@ All communication must be conducted in Japanese. Responses or instructions in En
 ### docs/ディレクトリの内容遵守
 
 - **docs/ディレクトリ内の内容を必ずよく読み、その内容に厳格に従うこと**
-- 主要なドキュメント：
-  - `docs/guideline.md`: 開発ガイドライン
-  - `docs/specification.md`: ソフトウェア要求仕様書
 - **docs/の内容に反した対応が必要な場合は、事前に指示を仰ぎ、許可された場合のみdocs/の内容を修正すること**
 
 ### プロジェクト固有の制約
