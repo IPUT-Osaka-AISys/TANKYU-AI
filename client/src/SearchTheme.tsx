@@ -1,5 +1,14 @@
 import React from "react";
-
+import {
+  TextField,
+  Button,
+  Paper,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+} from "@mui/material";
 import type { ApiResponse } from "./apiTypes";
 
 type SearchThemeProps = {
@@ -46,58 +55,62 @@ const SearchTheme: React.FC<SearchThemeProps> = ({
   };
 
   return (
-    <section>
-      <h2>テーマ探索</h2>
-      <form
-        className="search-form"
-        style={{ display: "flex", gap: "1rem", marginBottom: "2rem" }}
+    <Box sx={{ mb: 4 }}>
+      <Typography variant="h5" gutterBottom>
+        テーマ探索
+      </Typography>
+      <Box
+        component="form"
+        sx={{ display: "flex", gap: 2, mb: 3 }}
         onSubmit={handleSubmit}
       >
-        <input
-          type="text"
-          placeholder="キーワードや自然文を入力"
-          style={{ flex: 1, padding: "0.7rem", fontSize: "1.1rem" }}
+        <TextField
+          label="キーワードや自然文を入力"
+          variant="outlined"
+          fullWidth
           value={query}
           onChange={(e) => setQuery(e.target.value)}
+          disabled={loading}
         />
-        <button
+        <Button
           type="submit"
-          style={{ padding: "0.7rem 1.5rem", fontSize: "1.1rem" }}
+          variant="contained"
+          color="primary"
+          sx={{ minWidth: 120 }}
           disabled={loading || !query}
         >
           {loading ? "検索中..." : "検索"}
-        </button>
-      </form>
-      <div
-        className="search-result-placeholder"
-        style={{
-          background: "#f3f6fa",
-          padding: "2rem",
-          borderRadius: "8px",
-          minHeight: "120px",
-        }}
-      >
+        </Button>
+      </Box>
+      <Paper elevation={2} sx={{ p: 3, borderRadius: 2, minHeight: 120 }}>
         {apiError ? (
-          <p style={{ color: "red" }}>{apiError}</p>
+          <Typography color="error">{apiError}</Typography>
         ) : apiResult ? (
-          <div>
-            <div>
-              <strong>テーマ推薦:</strong>
-              <ul>
-                {apiResult.themes.map((theme, i) => (
-                  <li key={i}>{theme}</li>
-                ))}
-              </ul>
-            </div>
-            <div style={{ marginTop: "1.5rem" }}>
-              <strong>分類:</strong> {apiResult.categories.join(", ")}
-            </div>
-          </div>
+          <Box>
+            <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+              テーマ推薦
+            </Typography>
+            <List dense>
+              {apiResult.themes.map((theme, i) => (
+                <ListItem key={i} disablePadding>
+                  <ListItemText primary={theme} />
+                </ListItem>
+              ))}
+            </List>
+            <Box mt={3}>
+              <Typography variant="subtitle1" fontWeight="bold" gutterBottom>
+                分類
+              </Typography>
+              <Typography>{apiResult.categories.join(", ")}</Typography>
+            </Box>
+          </Box>
         ) : (
-          <p style={{ color: "#888" }}>検索結果がここに表示されます</p>
+          <Typography color="text.secondary">
+            検索結果がここに表示されます
+          </Typography>
         )}
-      </div>
-    </section>
+      </Paper>
+    </Box>
   );
 };
 

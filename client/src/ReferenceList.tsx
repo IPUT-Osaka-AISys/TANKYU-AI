@@ -1,5 +1,12 @@
 import React from "react";
-
+import {
+  Paper,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+} from "@mui/material";
 import type { ApiResponse } from "./apiTypes";
 
 type ReferenceListProps = {
@@ -8,29 +15,32 @@ type ReferenceListProps = {
 
 const ReferenceList: React.FC<ReferenceListProps> = ({ apiResult }) => {
   return (
-    <section>
-      <h2>参考文献リスト</h2>
-      <div
-        style={{
-          background: "#f3f6fa",
-          padding: "2rem",
-          borderRadius: "8px",
-          minHeight: "120px",
-        }}
-      >
+    <Box sx={{ mb: 4 }}>
+      <Typography variant="h5" gutterBottom>
+        参考文献リスト
+      </Typography>
+      <Paper elevation={2} sx={{ p: 3, borderRadius: 2, minHeight: 120 }}>
         {apiResult && apiResult.references.length > 0 ? (
-          <ul>
+          <List>
             {apiResult.references.map((ref) => (
-              <li key={ref.id}>
-                {ref.title}（{ref.year}年, {ref.author}）
-              </li>
+              <ListItem key={ref.id}>
+                <ListItemText
+                  primary={
+                    <Typography>
+                      {ref.title}（{ref.year}年, {ref.author}）
+                    </Typography>
+                  }
+                />
+              </ListItem>
             ))}
-          </ul>
+          </List>
         ) : (
-          <p style={{ color: "#888" }}>参考文献リストがここに表示されます</p>
+          <Typography color="text.secondary">
+            参考文献リストがここに表示されます
+          </Typography>
         )}
-      </div>
-    </section>
+      </Paper>
+    </Box>
   );
 };
 

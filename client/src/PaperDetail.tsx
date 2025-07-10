@@ -1,5 +1,12 @@
 import React from "react";
-
+import {
+  Paper,
+  Typography,
+  List,
+  ListItem,
+  ListItemText,
+  Box,
+} from "@mui/material";
 import type { ApiResponse } from "./apiTypes";
 
 type PaperDetailProps = {
@@ -8,33 +15,42 @@ type PaperDetailProps = {
 
 const PaperDetail: React.FC<PaperDetailProps> = ({ apiResult }) => {
   return (
-    <section>
-      <h2>論文詳細</h2>
-      <div
-        style={{
-          background: "#f3f6fa",
-          padding: "2rem",
-          borderRadius: "8px",
-          minHeight: "120px",
-        }}
-      >
+    <Box sx={{ mb: 4 }}>
+      <Typography variant="h5" gutterBottom>
+        論文詳細
+      </Typography>
+      <Paper elevation={2} sx={{ p: 3, borderRadius: 2, minHeight: 120 }}>
         {apiResult && apiResult.results.length > 0 ? (
-          <ul>
+          <List>
             {apiResult.results.map((paper) => (
-              <li key={paper.id}>
-                <div>
-                  <b>{paper.title}</b>（{paper.year}年, {paper.author}）
-                </div>
-                <div>要約: {paper.summary}</div>
-                <div>抄録: {paper.abstract}</div>
-              </li>
+              <ListItem key={paper.id} alignItems="flex-start" sx={{ mb: 2 }}>
+                <ListItemText
+                  primary={
+                    <Typography fontWeight="bold">
+                      {paper.title}（{paper.year}年, {paper.author}）
+                    </Typography>
+                  }
+                  secondary={
+                    <Box>
+                      <Typography variant="body2" color="text.secondary">
+                        <b>要約:</b> {paper.summary}
+                      </Typography>
+                      <Typography variant="body2" color="text.secondary">
+                        <b>抄録:</b> {paper.abstract}
+                      </Typography>
+                    </Box>
+                  }
+                />
+              </ListItem>
             ))}
-          </ul>
+          </List>
         ) : (
-          <p style={{ color: "#888" }}>論文詳細情報がここに表示されます</p>
+          <Typography color="text.secondary">
+            論文詳細情報がここに表示されます
+          </Typography>
         )}
-      </div>
-    </section>
+      </Paper>
+    </Box>
   );
 };
 
