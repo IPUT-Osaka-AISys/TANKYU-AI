@@ -48,6 +48,11 @@
   padding: 2rem;
   background: #fff;
   min-width: 0;
+  color: #222;
+}
+
+.search-result-placeholder {
+  color: #222;
 }
 
 .app-footer {

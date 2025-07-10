@@ -12,9 +12,19 @@ const SIDEBAR_ITEMS = [
 
 function App() {
   const [activePage, setActivePage] = useState("search");
+  const [query, setQuery] = useState("");
+  const [result, setResult] = useState<string | null>(null);
 
   let content;
-  if (activePage === "search") content = <SearchTheme />;
+  if (activePage === "search")
+    content = (
+      <SearchTheme
+        query={query}
+        setQuery={setQuery}
+        result={result}
+        setResult={setResult}
+      />
+    );
   else if (activePage === "paper") content = <PaperDetail />;
   else if (activePage === "reference") content = <ReferenceList />;
 
