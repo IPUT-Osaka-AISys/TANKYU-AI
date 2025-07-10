@@ -1,6 +1,12 @@
 import React from "react";
 
-const ReferenceList: React.FC = () => {
+import type { ApiResponse } from "./apiTypes";
+
+type ReferenceListProps = {
+  apiResult: ApiResponse | null;
+};
+
+const ReferenceList: React.FC<ReferenceListProps> = ({ apiResult }) => {
   return (
     <section>
       <h2>参考文献リスト</h2>
@@ -12,7 +18,17 @@ const ReferenceList: React.FC = () => {
           minHeight: "120px",
         }}
       >
-        <p style={{ color: "#888" }}>参考文献リストがここに表示されます</p>
+        {apiResult && apiResult.references.length > 0 ? (
+          <ul>
+            {apiResult.references.map((ref) => (
+              <li key={ref.id}>
+                {ref.title}（{ref.year}年, {ref.author}）
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p style={{ color: "#888" }}>参考文献リストがここに表示されます</p>
+        )}
       </div>
     </section>
   );

@@ -1,21 +1,48 @@
 import React from "react";
 
+import type { ApiResponse } from "./apiTypes";
+
 type SearchThemeProps = {
   query: string;
   setQuery: React.Dispatch<React.SetStateAction<string>>;
-  result: string | null;
-  setResult: React.Dispatch<React.SetStateAction<string | null>>;
+  apiResult: ApiResponse | null;
+  setApiResult: React.Dispatch<React.SetStateAction<ApiResponse | null>>;
 };
 
 const SearchTheme: React.FC<SearchThemeProps> = ({
   query,
   setQuery,
-  result,
-  setResult,
+  apiResult,
+  setApiResult,
 }) => {
-  const handleSubmit = (e: React.FormEvent) => {
+  const [loading, setLoading] = React.useState(false);
+  const [apiError, setApiError] = React.useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setResult(query ? `検索クエリ: ${query}` : null);
+    setLoading(true);
+    setApiResult(null);
+    setApiError(null);
+
+    try {
+      const res = await fetch("http://localhost:3001/search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ query }),
+      });
+      const data: ApiResponse = await res.json();
+      if (!res.ok || data.status === "error") {
+        setApiError(data.error || "サーバエラー");
+      } else {
+        setApiResult(data);
+      }
+    } catch (err) {
+      setApiError(
+        `通信エラー: ${err instanceof Error ? err.message : "不明なエラー"}`
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -36,8 +63,9 @@ const SearchTheme: React.FC<SearchThemeProps> = ({
         <button
           type="submit"
           style={{ padding: "0.7rem 1.5rem", fontSize: "1.1rem" }}
+          disabled={loading || !query}
         >
-          検索
+          {loading ? "検索中..." : "検索"}
         </button>
       </form>
       <div
@@ -49,8 +77,22 @@ const SearchTheme: React.FC<SearchThemeProps> = ({
           minHeight: "120px",
         }}
       >
-        {result ? (
-          <p>{result}</p>
+        {apiError ? (
+          <p style={{ color: "red" }}>{apiError}</p>
+        ) : apiResult ? (
+          <div>
+            <div>
+              <strong>テーマ推薦:</strong>
+              <ul>
+                {apiResult.themes.map((theme, i) => (
+                  <li key={i}>{theme}</li>
+                ))}
+              </ul>
+            </div>
+            <div style={{ marginTop: "1.5rem" }}>
+              <strong>分類:</strong> {apiResult.categories.join(", ")}
+            </div>
+          </div>
         ) : (
           <p style={{ color: "#888" }}>検索結果がここに表示されます</p>
         )}

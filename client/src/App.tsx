@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import "./App.css";
 import SearchTheme from "./SearchTheme";
 import PaperDetail from "./PaperDetail";
@@ -10,10 +10,12 @@ const SIDEBAR_ITEMS = [
   { key: "reference", label: "参考文献リスト" },
 ];
 
+import type { ApiResponse } from "./apiTypes";
+
 function App() {
   const [activePage, setActivePage] = useState("search");
   const [query, setQuery] = useState("");
-  const [result, setResult] = useState<string | null>(null);
+  const [apiResult, setApiResult] = useState<ApiResponse | null>(null);
 
   let content;
   if (activePage === "search")
@@ -21,12 +23,14 @@ function App() {
       <SearchTheme
         query={query}
         setQuery={setQuery}
-        result={result}
-        setResult={setResult}
+        apiResult={apiResult}
+        setApiResult={setApiResult}
       />
     );
-  else if (activePage === "paper") content = <PaperDetail />;
-  else if (activePage === "reference") content = <ReferenceList />;
+  else if (activePage === "paper")
+    content = <PaperDetail apiResult={apiResult} />;
+  else if (activePage === "reference")
+    content = <ReferenceList apiResult={apiResult} />;
 
   return (
     <div className="app-root">
