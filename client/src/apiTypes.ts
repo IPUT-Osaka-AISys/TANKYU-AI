@@ -12,10 +12,10 @@ export type Reference = {
   title: string;
   author: string;
   year: number;
+  url: string;
 };
 
 export type ApiResponse = {
-  results: Paper[];
   themes: string[];
   references: Reference[];
   categories: string[];

@@ -7,6 +7,15 @@ export type Paper = {
   summary: string;
 };
 
+export type CiniiArticle = {
+  id: string;
+  title: string;
+  author: string;
+  year: string;
+  abstract: string;
+  url: string;
+};
+
 export type Reference = {
   id: string;
   title: string;
@@ -15,7 +24,6 @@ export type Reference = {
 };
 
 export type SearchResponse = {
-  results: Paper[];
   themes: string[];
   references: Reference[];
   categories: string[];
