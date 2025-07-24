@@ -1,20 +1,21 @@
 // Azure OpenAIでテーマとカテゴリを生成するサービス
 import fetch from "node-fetch";
-import dotenv from "dotenv";
 import { AzureOpenAI } from "openai";
+import { config } from "../config";
 
-dotenv.config();
+const {
+  AZURE_OPENAI_API_KEY,
+  AZURE_OPENAI_API_VERSION,
+  AZURE_OPENAI_ENDPOINT,
+  AZURE_OPENAI_MODEL_NAME,
+  AZURE_OPENAI_DEPLOYMENT
+} = config();
 
-const apiKey = process.env.AZURE_OPENAI_API_KEY;
-const apiVersion = process.env.AZURE_OPENAI_API_VERSION || "2024-04-01-preview";
-const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-const modelName = process.env.AZURE_OPENAI_MODEL_NAME || "gpt-4.1-mini";
-const deployment = process.env.AZURE_OPENAI_DEPLOYMENT || "gpt-4.1-mini";
 const options = {
-  apiKey,
-  apiVersion,
-  endpoint,
-  deployment,
+  apiKey: AZURE_OPENAI_API_KEY,
+  apiVersion: AZURE_OPENAI_API_VERSION,
+  endpoint: AZURE_OPENAI_ENDPOINT,
+  deployment: AZURE_OPENAI_DEPLOYMENT,
 };
 
 const client = new AzureOpenAI(options);
@@ -38,7 +39,7 @@ ${paperSummaries}
 `;
 
   const result = await client.chat.completions.create({
-    model: modelName,
+    model: AZURE_OPENAI_MODEL_NAME,
     messages: [
       { role: "system", content: "あなたは優秀な研究テーマ提案AIです。" },
       { role: "user", content: prompt },

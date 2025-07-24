@@ -50,16 +50,9 @@ const PaperSelect: React.FC<PaperSelectProps> = ({
       >
         <option value="">選択してください</option>
         {references.map((paper) => {
-          // crid本体のみ抽出
-          let crid = paper.id;
-          if (/^https?:\/\//.test(paper.id)) {
-            const m = paper.id.match(/crid\/([0-9A-Za-z]+)/);
-            crid = m ? m[1] : paper.id;
-          } else if (paper.id.startsWith("crid:")) {
-            crid = paper.id.replace(/^crid:/, "");
-          }
+          // 元のIDをそのまま使用（フルURLを保持）
           return (
-            <option key={paper.id} value={crid}>
+            <option key={paper.id} value={paper.id}>
               {paper.title}
             </option>
           );
