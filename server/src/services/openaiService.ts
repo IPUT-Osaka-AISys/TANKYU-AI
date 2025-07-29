@@ -8,7 +8,7 @@ const {
   AZURE_OPENAI_API_VERSION,
   AZURE_OPENAI_ENDPOINT,
   AZURE_OPENAI_MODEL_NAME,
-  AZURE_OPENAI_DEPLOYMENT
+  AZURE_OPENAI_DEPLOYMENT,
 } = config();
 
 const options = {
@@ -75,4 +75,67 @@ ${paperSummaries}
     console.warn("カテゴリ抽出失敗:", response);
   }
   return { themes, categories };
+}
+
+/**
+ * クエリからキーワードの配列を生成する
+ * @param query ユーザーが入力したクエリ文字列
+ * @returns キーワードの配列
+ */
+export async function extractKeywordsFromQuery(
+  query: string
+): Promise<string[]> {
+  const prompt = `
+あなたは研究テーマ分析AIです。
+以下のクエリから、論文検索に有効なキーワードを1-5個抽出してください。
+
+クエリ: "${query}"
+
+抽出したキーワードは、CiNiiで論文を検索するのに適した形で出力してください。
+専門用語や学術的なキーワードを優先してください。
+
+出力形式:
+キーワード: ["...", "...", "...", "...", "..."]
+`;
+
+  const result = await client.chat.completions.create({
+    model: AZURE_OPENAI_MODEL_NAME,
+    messages: [
+      {
+        role: "system",
+        content:
+          "あなたは優秀な研究キーワード抽出AIです。学術的な観点から適切なキーワードを抽出します。",
+      },
+      { role: "user", content: prompt },
+    ],
+    max_tokens: 200,
+    temperature: 0.3,
+    top_p: 0.8,
+  });
+
+  if (!result.choices || result.choices.length === 0) {
+    throw new Error("OpenAIからの応答がありません");
+  }
+
+  if (!result.choices[0].message || !result.choices[0].message.content) {
+    throw new Error("OpenAIからの応答が不正です");
+  }
+
+  const response = result.choices[0].message.content.trim();
+
+  // キーワード抽出ロジック
+  const keywordsMatch = response.match(/キーワード\s*[:：]?\s*\[([^\]]+)\]/);
+
+  if (keywordsMatch) {
+    const keywords = keywordsMatch[1]
+      .split(",")
+      .map((s) => s.trim().replace(/["「」]/g, ""))
+      .filter((keyword) => keyword.length > 0);
+
+    return keywords;
+  } else {
+    console.warn("キーワード抽出失敗:", response);
+    // フォールバック: 元のクエリをそのまま使用
+    return [query];
+  }
 }
